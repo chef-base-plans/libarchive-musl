@@ -1,6 +1,5 @@
 title 'Tests to confirm libarchive binaries work as expected'
 
-base_dir = input("base_dir", value: "bin")
 plan_origin = ENV['HAB_ORIGIN']
 plan_name = input("plan_name", value: "libarchive-musl")
 plan_ident = "#{plan_origin}/#{plan_name}"
@@ -9,56 +8,60 @@ control 'core-plans-libarchive-musl' do
   impact 1.0
   title 'Ensure libarchive-musl binaries are working as expected'
   desc '
-  We first check that the three binaries we expect are present and then run version checks on both to verify that they are excecutable.
+  To test the binaries that libarchive-musl provides we first check for the installation directory.
+  Using this directory we then run checks to ensure the binary exists.
+  Then we test that the version of the binary we expect to be installed exists.
+    $ $PKG_PATH/bin/bsdcat --version
+      bsdcat 3.4.2 - libarchive 3.4.2 zlib/1.2.11 liblzma/5.2.4 bz2lib/1.0.8
   '
 
   hab_pkg_path = command("hab pkg path #{plan_ident}")
   describe hab_pkg_path do
-    its('exit_status') { should eq 0 }
     its('stdout') { should_not be_empty }
+    its('stderr') { should be_empty }
+    its('exit_status') { should eq 0 }
   end
 
-  target_dir = File.join(hab_pkg_path.stdout.strip, base_dir)
-
-  bsdcat_exists = command("ls #{File.join(target_dir, "bsdcat")}")
+  bsdcat_exists = command("ls #{File.join(hab_pkg_path.stdout.strip, "/bin/bsdcat")}")
   describe bsdcat_exists do
     its('stdout') { should match /bsdcat/ }
     its('stderr') { should be_empty }
     its('exit_status') { should eq 0 }
   end
 
-  bsdcat_works = command("#{File.join(target_dir, "bsdcat")} --version")
+  bsdcat_works = command("#{File.join(hab_pkg_path.stdout.strip, "/bin/bsdcat")} --version")
   describe bsdcat_works do
-    its('stdout') { should match /bsdcat [0-9]+.[0-9]+.[0-9]+/ }
+    its('stdout') { should match /bsdcat #{hab_pkg_path.stdout.strip.split('/')[5]}/ }
     its('stderr') { should be_empty }
     its('exit_status') { should eq 0 }
   end
 
-  bsdcpio_exists = command("ls #{File.join(target_dir, "bsdcpio")}")
+  bsdcpio_exists = command("ls #{File.join(hab_pkg_path.stdout.strip, "/bin/bsdcpio")}")
   describe bsdcpio_exists do
     its('stdout') { should match /bsdcpio/ }
     its('stderr') { should be_empty }
     its('exit_status') { should eq 0 }
   end
 
-  bsdcpio_works = command("#{File.join(target_dir, "bsdcpio")} --version")
+  bsdcpio_works = command("#{File.join(hab_pkg_path.stdout.strip, "/bin/bsdcpio")} --version")
   describe bsdcpio_works do
-    its('stdout') { should match /bsdcpio [0-9]+.[0-9]+.[0-9]+/ }
+    its('stdout') { should match /bsdcpio #{hab_pkg_path.stdout.strip.split('/')[5]}/ }
     its('stderr') { should be_empty }
     its('exit_status') { should eq 0 }
   end
 
-  bsdtar_exists = command("ls #{File.join(target_dir, "bsdtar")}")
+  bsdtar_exists = command("ls #{File.join(hab_pkg_path.stdout.strip, "/bin/bsdtar")}")
   describe bsdtar_exists do
     its('stdout') { should match /bsdtar/ }
     its('stderr') { should be_empty }
     its('exit_status') { should eq 0 }
   end
 
-  bsdtar_works = command("#{File.join(target_dir, "bsdtar")} --version")
+  bsdtar_works = command("#{File.join(hab_pkg_path.stdout.strip, "/bin/bsdtar")} --version")
   describe bsdtar_works do
-    its('stdout') { should match /bsdtar [0-9]+.[0-9]+.[0-9]+/ }
+    its('stdout') { should match /bsdtar #{hab_pkg_path.stdout.strip.split('/')[5]}/ }
     its('stderr') { should be_empty }
     its('exit_status') { should eq 0 }
   end
+
 end
