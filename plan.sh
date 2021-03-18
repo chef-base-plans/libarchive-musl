@@ -1,13 +1,13 @@
 pkg_name=libarchive-musl
 _distname=libarchive
 pkg_origin=core
-pkg_version=3.4.2
+pkg_version=3.5.1
 pkg_maintainer="The Habitat Maintainers <humans@habitat.sh>"
 pkg_description="Multi-format archive and compression library"
 pkg_upstream_url="https://www.libarchive.org"
 pkg_license=('BSD')
 pkg_source="http://www.libarchive.org/downloads/${_distname}-${pkg_version}.tar.gz"
-pkg_shasum="b60d58d12632ecf1e8fad7316dc82c6b9738a35625746b47ecdcaf4aed176176"
+pkg_shasum="9015d109ec00bb9ae1a384b172bf2fc1dff41e2c66e5a9eeddf933af9db37f5a"
 pkg_dirname="${_distname}-${pkg_version}"
 pkg_deps=(
   core/musl
